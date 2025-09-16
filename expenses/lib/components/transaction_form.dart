@@ -4,6 +4,8 @@ class TransactionForm extends StatelessWidget {
   final titleController = TextEditingController();
   final valueController = TextEditingController();
 
+  TransactionForm({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Card(
