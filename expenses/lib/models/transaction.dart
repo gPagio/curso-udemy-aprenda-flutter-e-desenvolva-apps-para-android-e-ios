@@ -10,6 +10,4 @@ class Transaction {
     required this.value,
     required this.date,
   });
-
-
 }
