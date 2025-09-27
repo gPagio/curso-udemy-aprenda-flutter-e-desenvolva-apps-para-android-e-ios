@@ -16,52 +16,73 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 600,
-      child: ListView.builder(
-        itemCount: _transactions.length,
-        itemBuilder: (ctx, index) {
-          final Transaction indexTransaction = _transactions[index];
-          return Card(
-            child: Row(
+      child: _transactions.isEmpty
+          ? Column(
               children: [
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 2,
-                    ),
-                  ),
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    brlFormatter.format(indexTransaction.value),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.purple,
-                    ),
-                  ),
+                SizedBox(height: 20),
+                Text(
+                  "Nenhuma transação cadastrada!",
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      indexTransaction.title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      DateFormat('d MMM y').format(indexTransaction.date),
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ],
+                SizedBox(height: 20),
+                SizedBox(
+                  height: 200,
+                  child: Image.asset(
+                    'assets/images/waiting.png',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ],
+            )
+          : ListView.builder(
+              itemCount: _transactions.length,
+              itemBuilder: (ctx, index) {
+                final Transaction indexTransaction = _transactions[index];
+                return Card(
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2,
+                          ),
+                        ),
+                        padding: EdgeInsets.all(10),
+                        child: Text(
+                          brlFormatter.format(indexTransaction.value),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.purple,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            indexTransaction.title,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            DateFormat('d MMM y').format(indexTransaction.date),
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }
