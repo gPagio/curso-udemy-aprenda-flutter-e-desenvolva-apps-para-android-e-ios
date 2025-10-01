@@ -5,12 +5,18 @@ import 'package:intl/intl.dart';
 class TransactionList extends StatelessWidget {
   final List<Transaction> _transactions;
 
+  final void Function(String) onRemoveTransaction;
+
   static final brlFormatter = NumberFormat.currency(
     locale: 'pt_BR',
     symbol: 'R\$',
   );
 
-  const TransactionList(this._transactions, {super.key});
+  const TransactionList(
+    this._transactions, {
+    required this.onRemoveTransaction,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +65,11 @@ class TransactionList extends StatelessWidget {
                     ),
                     subtitle: Text(
                       DateFormat('d MMM y').format(indexTransaction.date),
+                    ),
+                    trailing: IconButton(
+                      onPressed: () => onRemoveTransaction(indexTransaction.id),
+                      icon: Icon(Icons.delete),
+                      color: Theme.of(context).colorScheme.error,
                     ),
                   ),
                 );
