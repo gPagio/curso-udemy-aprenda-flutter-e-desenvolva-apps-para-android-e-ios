@@ -20,61 +20,75 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 600,
-      child: _transactions.isEmpty
-          ? Column(
-              children: [
-                SizedBox(height: 20),
-                Text(
-                  "Nenhuma transação cadastrada!",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                SizedBox(height: 20),
-                SizedBox(
-                  height: 200,
-                  child: Image.asset(
-                    'assets/images/waiting.png',
-                    fit: BoxFit.cover,
+    return _transactions.isEmpty
+        ? LayoutBuilder(
+            builder: (context, constraints) {
+              return Column(
+                children: [
+                  SizedBox(height: 20),
+                  Text(
+                    "Nenhuma transação cadastrada!",
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                ),
-              ],
-            )
-          : ListView.builder(
-              itemCount: _transactions.length,
-              itemBuilder: (ctx, index) {
-                final Transaction indexTransaction = _transactions[index];
-                return Card(
-                  elevation: 5,
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      child: Padding(
-                        padding: EdgeInsets.all(6),
-                        child: FittedBox(
-                          child: Text(
-                            brlFormatter.format(indexTransaction.value),
-                          ),
+                  SizedBox(height: 20),
+                  SizedBox(
+                    height: constraints.maxHeight * 0.6,
+                    child: Image.asset(
+                      'assets/images/waiting.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ],
+              );
+            },
+          )
+        : ListView.builder(
+            itemCount: _transactions.length,
+            itemBuilder: (ctx, index) {
+              final Transaction indexTransaction = _transactions[index];
+              return Card(
+                elevation: 5,
+                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 30,
+                    child: Padding(
+                      padding: EdgeInsets.all(6),
+                      child: FittedBox(
+                        child: Text(
+                          brlFormatter.format(indexTransaction.value),
                         ),
                       ),
                     ),
-                    title: Text(
-                      indexTransaction.title,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    subtitle: Text(
-                      DateFormat('d MMM y').format(indexTransaction.date),
-                    ),
-                    trailing: IconButton(
-                      onPressed: () => onRemoveTransaction(indexTransaction.id),
-                      icon: Icon(Icons.delete),
-                      color: Theme.of(context).colorScheme.error,
-                    ),
                   ),
-                );
-              },
-            ),
-    );
+                  title: Text(
+                    indexTransaction.title,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  subtitle: Text(
+                    DateFormat('d MMM y').format(indexTransaction.date),
+                  ),
+                  trailing: MediaQuery.of(context).size.width > 480
+                      ? TextButton.icon(
+                          onPressed: () =>
+                              onRemoveTransaction(indexTransaction.id),
+                          icon: Icon(Icons.delete),
+                          label: Text(
+                            "Excluir",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
+                        )
+                      : IconButton(
+                          onPressed: () =>
+                              onRemoveTransaction(indexTransaction.id),
+                          icon: Icon(Icons.delete),
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                ),
+              );
+            },
+          );
   }
 }
