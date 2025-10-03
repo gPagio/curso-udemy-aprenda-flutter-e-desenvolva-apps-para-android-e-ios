@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
 
     final appBar = AppBar(
-      title: Text("Despesas Pessoais"),
+      title: const Text("Despesas Pessoais"),
       actions: [
         if (isLandscape)
           IconButton(
@@ -139,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         IconButton(
           onPressed: () => _openTransactionFormModal(context),
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
         ),
       ],
     );
@@ -189,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ? Container()
                 : FloatingActionButton(
                     onPressed: () => _openTransactionFormModal(context),
-                    child: Icon(Icons.add),
+                    child: const Icon(Icons.add),
                   ),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
