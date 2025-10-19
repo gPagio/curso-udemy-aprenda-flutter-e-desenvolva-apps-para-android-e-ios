@@ -1,4 +1,3 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:meals/screens/categories_screen.dart' show CategoriesScreen;
 import 'package:meals/theme/app_theme.dart';
