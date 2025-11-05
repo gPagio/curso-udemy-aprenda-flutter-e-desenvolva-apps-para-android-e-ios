@@ -1,0 +1,14 @@
+import 'package:flutter/material.dart';
+import 'package:shop/models/product.dart' show Product;
+import 'package:shop/data/dummy_data.dart' show dummyProducts;
+
+class ProductList with ChangeNotifier {
+  final List<Product> _items = dummyProducts;
+
+  List<Product> get items => [..._items];
+
+  void addProduct(Product product) {
+    _items.add(product);
+    notifyListeners();
+  }
+}
