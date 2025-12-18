@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/models/product_list.dart';
+import 'package:shop/models/cart.dart' show Cart;
+import 'package:shop/models/product_list.dart' show ProductList;
+import 'package:shop/pages/cart_page.dart';
 import 'package:shop/pages/product_detail_page.dart' show ProductDetailPage;
 import 'package:shop/pages/products_overview_page.dart'
     show ProductsOverviewPage;
@@ -16,8 +18,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ProductList(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProductList()),
+        ChangeNotifierProvider(create: (_) => Cart()),
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: AppTheme.lightTheme(),
@@ -25,6 +30,7 @@ class MyApp extends StatelessWidget {
         routes: {
           AppRoutes.home: (ctx) => ProductsOverviewPage(),
           AppRoutes.productDetail: (ctx) => ProductDetailPage(),
+          AppRoutes.cart: (ctx) => CartPage(),
         },
       ),
     );
