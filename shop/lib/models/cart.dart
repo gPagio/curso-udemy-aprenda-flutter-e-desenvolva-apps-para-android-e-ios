@@ -2,7 +2,7 @@ import 'dart:math' show Random;
 
 import 'package:flutter/material.dart' show ChangeNotifier;
 import 'package:shop/models/cart_item.dart' show CartItem;
-import 'package:shop/models/product.dart';
+import 'package:shop/models/product.dart' show Product;
 
 class Cart with ChangeNotifier {
   Map<String, CartItem> _items = {};
