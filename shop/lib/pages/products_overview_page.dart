@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart' hide Badge;
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' show Consumer;
+import 'package:shop/components/app_drawer.dart' show AppDrawer;
 import 'package:shop/components/product_grid.dart' show ProductGrid;
 import 'package:shop/components/badge.dart' show Badge;
-import 'package:shop/models/cart.dart';
-import 'package:shop/utils/app_routes.dart';
+import 'package:shop/models/cart.dart' show Cart;
+import 'package:shop/utils/app_routes.dart' show AppRoutes;
 
 enum FilterOptions { favoritesOnly, all }
 
@@ -54,6 +55,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
         ],
       ),
       body: ProductGrid(showFavoritesOnly: _showFavoritesOnly),
+      drawer: AppDrawer(),
     );
   }
 }

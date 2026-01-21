@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:shop/components/cart_item_widget.dart';
-import 'package:shop/models/cart.dart';
+import 'package:intl/intl.dart' show NumberFormat;
+import 'package:provider/provider.dart' show Provider;
+import 'package:shop/components/cart_item_widget.dart' show CartItemWidget;
+import 'package:shop/models/cart.dart' show Cart;
+import 'package:shop/models/order_list.dart' show OrderList;
 
 class CartPage extends StatelessWidget {
   static final brlFormatter = NumberFormat.currency(
@@ -43,7 +44,13 @@ class CartPage extends StatelessWidget {
                   ),
                   Spacer(),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Provider.of<OrderList>(
+                        context,
+                        listen: false,
+                      ).addOrder(cart);
+                      cart.clear();
+                    },
                     style: TextButton.styleFrom(
                       textStyle: TextStyle(
                         color: Theme.of(context).primaryColor,
