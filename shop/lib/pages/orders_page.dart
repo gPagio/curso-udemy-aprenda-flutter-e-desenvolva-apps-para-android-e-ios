@@ -18,10 +18,17 @@ class OrdersPage extends StatelessWidget {
     final OrderList orderList = Provider.of<OrderList>(context);
     return Scaffold(
       appBar: AppBar(title: Text('Meus Pedidos')),
-      body: ListView.builder(
-        itemCount: orderList.itemCount,
-        itemBuilder: (ctx, i) => OrderWidget(order: orderList.items[i]),
-      ),
+      body: orderList.items.isEmpty
+          ? Center(
+              child: Text(
+                'Nenhum pedido realizado!',
+                style: TextStyle(fontSize: 18),
+              ),
+            )
+          : ListView.builder(
+              itemCount: orderList.itemCount,
+              itemBuilder: (ctx, i) => OrderWidget(order: orderList.items[i]),
+            ),
       drawer: AppDrawer(),
     );
   }

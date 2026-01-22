@@ -1,8 +1,7 @@
-import 'dart:math' show Random;
-
 import 'package:flutter/material.dart' show ChangeNotifier;
 import 'package:shop/models/cart.dart' show Cart;
 import 'package:shop/models/order.dart' show Order;
+import 'package:uuid/v7.dart' show UuidV7;
 
 class OrderList with ChangeNotifier {
   final List<Order> _items = [];
@@ -19,7 +18,7 @@ class OrderList with ChangeNotifier {
     _items.insert(
       0,
       Order(
-        id: Random().nextDouble().toString(),
+        id: UuidV7().generate(),
         total: cart.totalAmount,
         products: cart.items.values.toList(),
         dateTime: DateTime.now(),

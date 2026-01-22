@@ -27,7 +27,9 @@ class _OrderWidgetState extends State<OrderWidget> {
       child: Column(
         children: [
           ListTile(
-            title: Text('Pedido #${widget.order.id}'),
+            title: Text(
+              'Pedido #${'${widget.order.id.split('-').first} - ${widget.order.id.split('-').last}'}',
+            ),
             subtitle: Text(
               'Total: ${brlFormatter.format(widget.order.total)} - Date: ${dhFormatter.format(widget.order.dateTime)}',
             ),
