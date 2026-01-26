@@ -3,7 +3,7 @@ import 'package:provider/provider.dart' show Provider;
 import 'package:shop/components/app_drawer.dart' show AppDrawer;
 import 'package:shop/components/product_item.dart' show ProductItem;
 import 'package:shop/models/product_list.dart' show ProductList;
-import 'package:shop/utils/app_routes.dart';
+import 'package:shop/utils/app_routes.dart' show AppRoutes;
 
 class ProductPage extends StatelessWidget {
   const ProductPage({super.key});

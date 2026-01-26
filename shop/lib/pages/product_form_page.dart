@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shop/models/product.dart' show Product;
+import 'package:uuid/v7.dart' show UuidV7;
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({super.key});
@@ -12,6 +14,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
   final _descriptionFocus = FocusNode();
   final _imageUrlFocus = FocusNode();
   final _imageUrlControler = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _formData = <String, Object>{};
 
   @override
   void initState() {
@@ -33,13 +37,45 @@ class _ProductFormPageState extends State<ProductFormPage> {
     setState(() {});
   }
 
+  bool isValidUrl(String url) {
+    bool isValid = Uri.tryParse(url)?.hasAbsolutePath ?? false;
+    bool endsWithFile =
+        url.toLowerCase().endsWith('.png') ||
+        url.toLowerCase().endsWith('.jpg') ||
+        url.toLowerCase().endsWith('.jpeg');
+
+    return isValid && endsWithFile;
+  }
+
+  void _submitForm() {
+    final isValid = _formKey.currentState?.validate() ?? false;
+
+    if (!isValid) {
+      return;
+    }
+
+    _formKey.currentState?.save();
+
+    final newProduct = Product(
+      id: UuidV7().generate(),
+      name: _formData['name'] as String,
+      description: _formData['description'] as String,
+      price: _formData['price'] as double,
+      imageUrl: _formData['imageUrl'] as String,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Adicionar Produtos')),
+      appBar: AppBar(
+        title: Text('Adicionar Produtos'),
+        actions: [IconButton(onPressed: _submitForm, icon: Icon(Icons.save))],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: Form(
+          key: _formKey,
           child: ListView(
             children: [
               TextFormField(
@@ -47,6 +83,16 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocus);
+                },
+                onSaved: (nome) => _formData['name'] = nome ?? '',
+                validator: (nome) {
+                  if (nome == null || nome.trim().isEmpty) {
+                    return 'Nome é obrigatório';
+                  }
+                  if (nome.trim().length < 3) {
+                    return 'Nome deve ter no mínimo 3 letras';
+                  }
+                  return null;
                 },
               ),
               TextFormField(
@@ -57,6 +103,15 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_descriptionFocus);
                 },
+                onSaved: (preco) =>
+                    _formData['price'] = double.parse(preco ?? '0'),
+                validator: (preco) {
+                  final price = double.tryParse(preco ?? '');
+                  if (price == null || price <= 0) {
+                    return 'Informe um preço válido';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Descrição'),
@@ -66,6 +121,17 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 maxLines: 3,
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_imageUrlFocus);
+                },
+                onSaved: (descricao) =>
+                    _formData['description'] = descricao ?? '',
+                validator: (descricao) {
+                  if (descricao == null || descricao.trim().isEmpty) {
+                    return 'Descrição é obrigatória';
+                  }
+                  if (descricao.trim().length < 10) {
+                    return 'Descrição deve ter no mínimo 10 letras';
+                  }
+                  return null;
                 },
               ),
               Row(
@@ -78,6 +144,20 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       controller: _imageUrlControler,
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _submitForm(),
+                      onSaved: (imageUrl) =>
+                          _formData['imageUrl'] = imageUrl ?? '',
+                      validator: (imageUrl) {
+                        if (imageUrl == null || imageUrl.isEmpty) {
+                          return 'Informe a URL da imagem';
+                        }
+
+                        if (!isValidUrl(imageUrl)) {
+                          return 'URL inválida';
+                        }
+
+                        return null;
+                      },
                     ),
                   ),
                   Container(

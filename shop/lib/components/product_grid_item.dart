@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart' show Consumer, Provider;
-import 'package:shop/models/cart.dart';
+import 'package:shop/models/cart.dart' show Cart;
 import 'package:shop/models/product.dart' show Product;
 import 'package:shop/utils/app_routes.dart' show AppRoutes;
 
