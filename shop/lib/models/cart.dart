@@ -1,8 +1,7 @@
-import 'dart:math' show Random;
-
 import 'package:flutter/material.dart' show ChangeNotifier;
 import 'package:shop/models/cart_item.dart' show CartItem;
 import 'package:shop/models/product.dart' show Product;
+import 'package:uuid/v7.dart' show UuidV7;
 
 class Cart with ChangeNotifier {
   Map<String, CartItem> _items = {};
@@ -39,7 +38,7 @@ class Cart with ChangeNotifier {
       _items.putIfAbsent(
         product.id,
         () => CartItem(
-          id: Random().nextDouble().toString(),
+          id: UuidV7().generate(),
           productId: product.id,
           name: product.name,
           quantity: 1,

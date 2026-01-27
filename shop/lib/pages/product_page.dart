@@ -27,15 +27,22 @@ class ProductPage extends StatelessWidget {
       drawer: AppDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(8),
-        child: ListView.builder(
-          itemCount: productList.itemsCount,
-          itemBuilder: (ctx, i) => Column(
-            children: [
-              ProductItem(product: productList.items[i]),
-              const Divider(),
-            ],
-          ),
-        ),
+        child: productList.items.isEmpty
+            ? Center(
+                child: Text(
+                  'Nenhum produto cadastrado!',
+                  style: TextStyle(fontSize: 20),
+                ),
+              )
+            : ListView.builder(
+                itemCount: productList.itemsCount,
+                itemBuilder: (ctx, i) => Column(
+                  children: [
+                    ProductItem(product: productList.items[i]),
+                    const Divider(),
+                  ],
+                ),
+              ),
       ),
     );
   }
