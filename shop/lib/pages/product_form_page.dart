@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/models/product.dart' show Product;
+import 'package:shop/models/product_list.dart';
 import 'package:uuid/v7.dart' show UuidV7;
 
 class ProductFormPage extends StatefulWidget {
@@ -63,6 +65,10 @@ class _ProductFormPageState extends State<ProductFormPage> {
       price: _formData['price'] as double,
       imageUrl: _formData['imageUrl'] as String,
     );
+
+    Provider.of<ProductList>(context, listen: false).addProduct(newProduct);
+
+    Navigator.of(context).pop();
   }
 
   @override
