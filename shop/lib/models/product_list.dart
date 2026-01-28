@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shop/models/product.dart' show Product;
 import 'package:shop/data/dummy_data.dart' show dummyProducts;
 import 'package:uuid/v7.dart' show UuidV7;
+import 'package:http/http.dart' show post;
 
 class ProductList with ChangeNotifier {
+  final _baseUrl = 
   final List<Product> _items = dummyProducts;
 
   List<Product> get items => [..._items];
@@ -11,6 +13,9 @@ class ProductList with ChangeNotifier {
       _items.where((product) => product.isFavorite).toList();
 
   void addProduct(Product product) {
+    post(
+
+    );
     _items.add(product);
     notifyListeners();
   }
