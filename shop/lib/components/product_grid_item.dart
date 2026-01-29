@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart' show Consumer, Provider;
+import 'package:shop/exceptions/http_exception.dart' show HttpException;
 import 'package:shop/models/cart.dart' show Cart;
 import 'package:shop/models/product.dart' show Product;
 import 'package:shop/utils/app_routes.dart' show AppRoutes;
@@ -9,6 +10,7 @@ class ProductGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     final Product product = Provider.of<Product>(context, listen: false);
     final Cart cart = Provider.of<Cart>(context, listen: false);
 
@@ -19,8 +21,15 @@ class ProductGridItem extends StatelessWidget {
           backgroundColor: Colors.black87,
           leading: Consumer<Product>(
             builder: (ctx, product, _) => IconButton(
-              onPressed: () {
-                product.toggleFavorite();
+              onPressed: () async {
+                try {
+                  await product.toggleFavorite();
+                } on HttpException catch (error) {
+                  scaffoldMessenger.hideCurrentSnackBar();
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text(error.msg)),
+                  );
+                }
               },
               color: Theme.of(context).colorScheme.secondary,
               icon: Icon(
