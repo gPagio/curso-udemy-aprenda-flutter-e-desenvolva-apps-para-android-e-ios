@@ -73,7 +73,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
     return isValid && endsWithFile;
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     final isValid = _formKey.currentState?.validate() ?? false;
 
     if (!isValid) {
@@ -82,40 +82,38 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
     _formKey.currentState?.save();
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
-    Provider.of<ProductList>(context, listen: false)
-        .saveProduct(_formData)
-        .catchError((error) {
-          if (mounted) {
-            return showDialog(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: Text('Erro'),
-                content: Text('Ocorreu um erro ao tentar salvar o produto!'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('OK'),
-                  ),
-                ],
+    try {
+      await Provider.of<ProductList>(
+        context,
+        listen: false,
+      ).saveProduct(_formData);
+
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    } catch (error) {
+      if (mounted) {
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Erro'),
+            content: Text('Ocorreu um erro ao tentar salvar o produto!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
               ),
-            );
-          }
-        })
-        .then((value) {
-          setState(() {
-            _isLoading = false;
-          });
-
-          if (mounted) {
-            Navigator.of(context).pop();
-          }
-        });
+            ],
+          ),
+        );
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override

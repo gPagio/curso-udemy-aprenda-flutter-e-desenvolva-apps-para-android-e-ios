@@ -2,22 +2,43 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shop/models/product.dart' show Product;
-import 'package:shop/data/dummy_data.dart' show dummyProducts;
 import 'package:uuid/v7.dart' show UuidV7;
-import 'package:http/http.dart' as http show post;
+import 'package:http/http.dart' as http show post, get;
 
 class ProductList with ChangeNotifier {
-  final _baseUrl =
-      'https://curso-udemy-flutter-shop-default-rtdb.firebaseio.com';
-  final List<Product> _items = dummyProducts;
+  final _url =
+      'https://curso-udemy-flutter-shop-default-rtdb.firebaseio.com/products.json';
+  final List<Product> _items = [];
 
   List<Product> get items => [..._items];
   List<Product> get favoriteItems =>
       _items.where((product) => product.isFavorite).toList();
 
-  Future<void> addProduct(Product product) {
-    final request = http.post(
-      Uri.parse('$_baseUrl/products.json'),
+  Future<void> loadProducts() async {
+    _items.clear();
+    final response = await http.get(Uri.parse(_url));
+
+    if (response.body == 'null') return;
+
+    final Map<String, dynamic> data = jsonDecode(response.body);
+    data.forEach(((productId, productData) {
+      _items.add(
+        Product(
+          id: productId,
+          name: productData['name'],
+          description: productData['description'],
+          price: productData['price'],
+          imageUrl: productData['imageUrl'],
+          isFavorite: productData['isFavorite'],
+        ),
+      );
+    }));
+    notifyListeners();
+  }
+
+  Future<void> addProduct(Product product) async {
+    final response = await http.post(
+      Uri.parse(_url),
       body: jsonEncode({
         "name": product.name,
         "description": product.description,
@@ -27,20 +48,18 @@ class ProductList with ChangeNotifier {
       }),
     );
 
-    return request.then<void>((response) {
-      final firebaseId = jsonDecode(response.body)['name'];
-      _items.add(
-        Product(
-          id: firebaseId,
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          isFavorite: product.isFavorite,
-        ),
-      );
-      notifyListeners();
-    });
+    final firebaseId = jsonDecode(response.body)['name'];
+    _items.add(
+      Product(
+        id: firebaseId,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        isFavorite: product.isFavorite,
+      ),
+    );
+    notifyListeners();
   }
 
   Future<void> updateProduct(Product product) {

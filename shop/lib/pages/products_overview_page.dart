@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart' hide Badge;
-import 'package:provider/provider.dart' show Consumer;
+import 'package:provider/provider.dart' show Consumer, Provider;
 import 'package:shop/components/app_drawer.dart' show AppDrawer;
 import 'package:shop/components/product_grid.dart' show ProductGrid;
 import 'package:shop/components/badge.dart' show Badge;
 import 'package:shop/models/cart.dart' show Cart;
+import 'package:shop/models/product_list.dart';
 import 'package:shop/utils/app_routes.dart' show AppRoutes;
 
 enum FilterOptions { favoritesOnly, all }
@@ -17,6 +18,20 @@ class ProductsOverviewPage extends StatefulWidget {
 
 class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
   bool _showFavoritesOnly = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Provider.of<ProductList>(context, listen: false).loadProducts().then((
+      value,
+    ) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +69,9 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
           ),
         ],
       ),
-      body: ProductGrid(showFavoritesOnly: _showFavoritesOnly),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ProductGrid(showFavoritesOnly: _showFavoritesOnly),
       drawer: AppDrawer(),
     );
   }
