@@ -65,12 +65,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
   bool isValidUrl(String url) {
     bool isValid = Uri.tryParse(url)?.hasAbsolutePath ?? false;
-    bool endsWithFile =
-        url.toLowerCase().endsWith('.png') ||
-        url.toLowerCase().endsWith('.jpg') ||
-        url.toLowerCase().endsWith('.jpeg');
 
-    return isValid && endsWithFile;
+    return isValid;
   }
 
   Future<void> _submitForm() async {
@@ -238,12 +234,11 @@ class _ProductFormPageState extends State<ProductFormPage> {
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey, width: 1),
                         ),
-                        alignment: Alignment.center,
                         child: _imageUrlControler.text.isEmpty
-                            ? Text('Informe a URL')
-                            : FittedBox(
+                            ? Center(child: Text('Informe a URL'))
+                            : Image.network(
+                                _imageUrlControler.text,
                                 fit: BoxFit.cover,
-                                child: Image.network(_imageUrlControler.text),
                               ),
                       ),
                     ],
