@@ -65,7 +65,16 @@ class ProductGridItem extends StatelessWidget {
               context,
             ).pushNamed(AppRoutes.productDetail, arguments: product);
           },
-          child: Image.network(product.imageUrl, fit: BoxFit.cover),
+          child: Image.network(
+            product.imageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Center(
+              child: Text(
+                'Erro ao carregar imagem do produto!',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
         ),
       ),
     );
