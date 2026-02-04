@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:shop/exceptions/http_exception.dart';
+import 'package:shop/exceptions/http_exception.dart' show HttpException;
 import 'package:shop/models/product.dart' show Product;
 import 'package:shop/utils/constants.dart' show Constants;
 import 'package:uuid/v7.dart' show UuidV7;

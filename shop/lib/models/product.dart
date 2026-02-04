@@ -46,6 +46,7 @@ class Product with ChangeNotifier {
         );
       }
     } on HttpException {
+      _toggleFavorite();
       rethrow;
     } catch (error) {
       _toggleFavorite();
