@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' show dotenv;
+import 'package:provider/provider.dart'
+    show ChangeNotifierProvider, MultiProvider;
+import 'package:shop/models/auth.dart';
 import 'package:shop/models/cart.dart' show Cart;
 import 'package:shop/models/order_list.dart' show OrderList;
 import 'package:shop/models/product_list.dart' show ProductList;
@@ -15,6 +18,8 @@ import 'package:shop/theme/app_theme.dart' show AppTheme;
 import 'package:shop/utils/app_routes.dart' show AppRoutes;
 
 void main() {
+  dotenv.load(fileName: '.env');
+
   runApp(const MyApp());
 }
 
@@ -28,6 +33,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProductList()),
         ChangeNotifierProvider(create: (_) => Cart()),
         ChangeNotifierProvider(create: (_) => OrderList()),
+        ChangeNotifierProvider(create: (_) => Auth()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

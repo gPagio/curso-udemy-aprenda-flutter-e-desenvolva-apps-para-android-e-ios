@@ -16,10 +16,15 @@ class AppTheme {
       brightness: Brightness.light,
     );
 
+    final lightTextTheme = const TextTheme(
+      titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    );
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: lightThemeColorScheme,
       fontFamily: defaultFontFamily,
+      textTheme: lightTextTheme,
     );
   }
 }
