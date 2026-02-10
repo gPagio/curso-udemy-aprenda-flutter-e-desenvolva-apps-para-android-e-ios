@@ -1,7 +1,7 @@
 import 'dart:convert' show jsonEncode;
 
 import 'package:flutter/material.dart' show ChangeNotifier;
-import 'package:http/http.dart' as http show patch;
+import 'package:http/http.dart' as http show put;
 import 'package:shop/exceptions/http_exception.dart' show HttpException;
 import 'package:shop/utils/constants.dart' show Constants;
 
@@ -27,12 +27,14 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavorite() async {
+  Future<void> toggleFavorite(String token, String userId) async {
     try {
       _toggleFavorite();
 
-      final response = await http.patch(
-        Uri.parse('${Constants.productBaseUrl}/$id.json'),
+      final response = await http.put(
+        Uri.parse(
+          '${Constants.userFavoritesBaseUrl}/$userId/$id.json?auth=$token',
+        ),
         body: jsonEncode({"isFavorite": isFavorite}),
       );
 

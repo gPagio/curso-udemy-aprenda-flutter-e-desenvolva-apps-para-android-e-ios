@@ -39,7 +39,7 @@ class Auth with ChangeNotifier {
     return null;
   }
 
-  String? get uid {
+  String? get userId {
     if (isAuth) return _uid;
     return null;
   }
@@ -65,7 +65,7 @@ class Auth with ChangeNotifier {
     if (body['error'] != null) {
       throw AuthException(body['error']['message']);
     } else {
-      _token = body['token'];
+      _token = body['idToken'];
       _email = body['email'];
       _uid = body['localId'];
       _expirationDate = DateTime.now().add(

@@ -8,7 +8,12 @@ import 'package:shop/utils/constants.dart' show Constants;
 import 'package:http/http.dart' as http show post, get;
 
 class OrderList with ChangeNotifier {
-  final List<Order> _items = [];
+  final String? _token;
+  List<Order> _items = [];
+
+  OrderList([this._token = '', List<Order> _items = const []]) {
+    this._items.addAll(_items);
+  }
 
   List<Order> get items {
     return [..._items];
@@ -21,7 +26,7 @@ class OrderList with ChangeNotifier {
   Future<void> addOrder(Cart cart) async {
     final date = DateTime.now();
     final respose = await http.post(
-      Uri.parse('${Constants.ordersBaseUrl}.json'),
+      Uri.parse('${Constants.ordersBaseUrl}.json?auth=$_token'),
       body: jsonEncode({
         'total': cart.totalAmount,
         'dateTime': date.toIso8601String(),
@@ -53,32 +58,35 @@ class OrderList with ChangeNotifier {
   }
 
   Future<void> loadOrders() async {
-    _items.clear();
+    List<Order> items = [];
+
     final response = await http.get(
-      Uri.parse('${Constants.ordersBaseUrl}.json'),
+      Uri.parse('${Constants.ordersBaseUrl}.json?auth=$_token'),
     );
 
     if (response.body == 'null') return;
 
     final Map<String, dynamic> data = jsonDecode(response.body);
     data.forEach(((orderId, orderData) {
-      _items.add(
+      items.add(
         Order(
           id: orderId,
           dateTime: DateTime.parse(orderData['dateTime']),
-          total: orderData['total'],
+          total: double.parse(orderData['total'].toString()),
           products: (orderData['products'] as List<dynamic>).map((item) {
             return CartItem(
               id: item['id'],
               productId: item['productId'],
               name: item['name'],
-              quantity: item['quantity'],
-              price: item['price'],
+              quantity: item['quantity'] as int,
+              price: (item['price'] as num).toDouble(),
             );
           }).toList(),
         ),
       );
     }));
+
+    _items = items.reversed.toList();
     notifyListeners();
   }
 }
