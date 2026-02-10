@@ -29,17 +29,17 @@ class Auth with ChangeNotifier {
     return _token != null && isValidTokenExpirationDate;
   }
 
-  String? get getToken {
+  String? get token {
     if (isAuth) return _token;
     return null;
   }
 
-  String? get getEmail {
+  String? get email {
     if (isAuth) return _email;
     return null;
   }
 
-  String? get getUid {
+  String? get uid {
     if (isAuth) return _uid;
     return null;
   }

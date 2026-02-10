@@ -8,7 +8,10 @@ import 'package:uuid/v7.dart' show UuidV7;
 import 'package:http/http.dart' as http show post, get, patch, delete;
 
 class ProductList with ChangeNotifier {
+  final String _token;
   final List<Product> _items = [];
+
+  ProductList(this._token, List<Product> items);
 
   List<Product> get items => [..._items];
   List<Product> get favoriteItems =>
