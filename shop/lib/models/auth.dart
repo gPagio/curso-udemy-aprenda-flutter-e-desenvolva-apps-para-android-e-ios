@@ -1,8 +1,10 @@
+import 'dart:async' show Timer;
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' show dotenv;
 import 'package:http/http.dart' as http show post;
+import 'package:shop/data/store.dart' show Store;
 import 'package:shop/exceptions/auth_exception.dart' show AuthException;
 
 enum _AuthMethod {
@@ -20,8 +22,9 @@ class Auth with ChangeNotifier {
 
   String? _token;
   String? _email;
-  String? _uid;
+  String? _userId;
   DateTime? _expirationDate;
+  Timer? _logoutTimer;
 
   bool get isAuth {
     final isValidTokenExpirationDate =
@@ -40,7 +43,7 @@ class Auth with ChangeNotifier {
   }
 
   String? get userId {
-    if (isAuth) return _uid;
+    if (isAuth) return _userId;
     return null;
   }
 
@@ -67,11 +70,19 @@ class Auth with ChangeNotifier {
     } else {
       _token = body['idToken'];
       _email = body['email'];
-      _uid = body['localId'];
+      _userId = body['localId'];
       _expirationDate = DateTime.now().add(
         Duration(seconds: int.parse(body['expiresIn'])),
       );
 
+      Store.saveMap('userData', {
+        'token': _token,
+        'email': _email,
+        'userId': _userId,
+        'expirationDate': _expirationDate!.toIso8601String(),
+      });
+
+      _autoLogout();
       notifyListeners();
     }
   }
@@ -80,7 +91,47 @@ class Auth with ChangeNotifier {
     return _authenticate(email, password, _AuthMethod.login);
   }
 
+  Future<void> tryAutoLogin() async {
+    if (isAuth) return;
+
+    final userData = await Store.getMap('userData');
+    if (userData.isEmpty) return;
+
+    final expirationDate = DateTime.parse(userData['expirationDate']);
+    if (expirationDate.isBefore(DateTime.now())) return;
+
+    _token = userData['token'];
+    _email = userData['email'];
+    _userId = userData['userId'];
+    _expirationDate = expirationDate;
+
+    _autoLogout();
+    notifyListeners();
+  }
+
   Future<void> signup(String email, String password) async {
     return _authenticate(email, password, _AuthMethod.signup);
+  }
+
+  void logout() {
+    _token = null;
+    _email = null;
+    _userId = null;
+    _expirationDate = null;
+
+    _clearLogoutTimer();
+    Store.remove('userData').then((_) => notifyListeners());
+  }
+
+  void _clearLogoutTimer() {
+    _logoutTimer?.cancel();
+    _logoutTimer = null;
+  }
+
+  void _autoLogout() {
+    _clearLogoutTimer();
+
+    final timeToLogout = _expirationDate?.difference(DateTime.now()).inSeconds;
+    _logoutTimer = Timer(Duration(seconds: timeToLogout ?? 0), logout);
   }
 }

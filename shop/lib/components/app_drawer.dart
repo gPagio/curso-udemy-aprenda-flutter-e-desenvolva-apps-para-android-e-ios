@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart' show Provider;
+import 'package:shop/models/auth.dart' show Auth;
 import 'package:shop/utils/app_routes.dart' show AppRoutes;
 
 class AppDrawer extends StatelessWidget {
@@ -9,9 +11,9 @@ class AppDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          AppBar(
-            title: Text('Bem Vindo Usuário!'),
-            automaticallyImplyLeading: false,
+          UserAccountsDrawerHeader(
+            accountName: Text('Bem Vindo!'),
+            accountEmail: Text('Usuário'),
           ),
           Divider(),
           ListTile(
@@ -34,6 +36,20 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pushReplacementNamed(AppRoutes.products);
             },
+          ),
+          Spacer(),
+          SafeArea(
+            child: ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Sair'),
+              onTap: () {
+                Provider.of<Auth>(context, listen: false).logout();
+
+                Navigator.of(
+                  context,
+                ).pushReplacementNamed(AppRoutes.authOrHome);
+              },
+            ),
           ),
         ],
       ),

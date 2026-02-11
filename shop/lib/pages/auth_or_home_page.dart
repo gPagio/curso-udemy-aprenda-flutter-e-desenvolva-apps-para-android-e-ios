@@ -12,6 +12,17 @@ class AuthOrHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     Auth auth = Provider.of<Auth>(context);
 
-    return auth.isAuth ? ProductsOverviewPage() : AuthPage();
+    return FutureBuilder(
+      future: auth.tryAutoLogin(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.error != null) {
+          return Center(child: Text('Ocorreu um erro!'));
+        }
+
+        return auth.isAuth ? ProductsOverviewPage() : AuthPage();
+      },
+    );
   }
 }
