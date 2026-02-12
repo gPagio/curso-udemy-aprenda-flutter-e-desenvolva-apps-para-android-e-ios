@@ -12,7 +12,8 @@ class AuthForm extends StatefulWidget {
   State<AuthForm> createState() => _AuthFormState();
 }
 
-class _AuthFormState extends State<AuthForm> {
+class _AuthFormState extends State<AuthForm>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
 
   final _passwordController = TextEditingController();
@@ -20,17 +21,40 @@ class _AuthFormState extends State<AuthForm> {
   AuthMode _authMode = AuthMode.login;
   final Map<String, String> _authData = {'email': '', 'password': ''};
 
-  bool _isLoading = false;
+  AnimationController? _animationController;
+  Animation<double>? _opacityAnimation;
 
+  bool _isLoading = false;
   bool _isLogin() => _authMode == AuthMode.login;
-  bool _isSignup() => _authMode == AuthMode.signup;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 150),
+    );
+
+    _opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController!, curve: Curves.linear),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _animationController?.dispose();
+  }
 
   void _switchAuthMode() {
     setState(() {
       if (_isLogin()) {
         _authMode = AuthMode.signup;
+        _animationController?.forward();
       } else {
         _authMode = AuthMode.login;
+        _animationController?.reverse();
       }
     });
   }
@@ -84,7 +108,9 @@ class _AuthFormState extends State<AuthForm> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.circular(10),
       ),
-      child: Container(
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 150),
+        curve: Curves.easeIn,
         padding: const EdgeInsets.all(16),
         height: _isLogin() ? 310 : 400,
         width: deviceSize.width * 0.75,
@@ -126,23 +152,33 @@ class _AuthFormState extends State<AuthForm> {
                   return null;
                 },
               ),
-              if (_isSignup())
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Confirmar Senha'),
-                  keyboardType: TextInputType.text,
-                  obscureText: true,
-                  validator: _isLogin()
-                      ? null
-                      : (value) {
-                          final password = value ?? '';
-
-                          if (password != _passwordController.text) {
-                            return 'Senhas devem ser iguais!';
-                          }
-
-                          return null;
-                        },
+              AnimatedContainer(
+                constraints: BoxConstraints(
+                  minHeight: _isLogin() ? 0 : 60,
+                  maxHeight: _isLogin() ? 0 : 120,
                 ),
+                duration: Duration(milliseconds: 150),
+                curve: Curves.linear,
+                child: FadeTransition(
+                  opacity: _opacityAnimation!,
+                  child: TextFormField(
+                    decoration: InputDecoration(labelText: 'Confirmar Senha'),
+                    keyboardType: TextInputType.text,
+                    obscureText: true,
+                    validator: _isLogin()
+                        ? null
+                        : (value) {
+                            final password = value ?? '';
+
+                            if (password != _passwordController.text) {
+                              return 'Senhas devem ser iguais!';
+                            }
+
+                            return null;
+                          },
+                  ),
+                ),
+              ),
               SizedBox(height: 20),
               _isLoading
                   ? CircularProgressIndicator()
